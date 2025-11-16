@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Monkey Mayhem 🐒 Banana Stealth</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="wrapper">
+    <header>
+      <h1>Throw-nana 🐒</h1>
+      <p class="tagline">Throw bananas at visitors… but don’t get caught by the guards!</p>
+    </header>
+
+    <main>
+      <section class="game-panel">
+        <canvas id="gameCanvas" width="900" height="500"></canvas>
+
+        <div class="controls">
+          <div>
+            <p><strong>Controls:</strong></p>
+            <ul>
+              <li>⬅️ / ➡️ or A / D – Move monkey</li>
+              <li>Space – Throw banana</li>
+            </ul>
+          </div>
+          <button id="restartBtn">Restart Game</button>
+        </div>
+      </section>
+
+      <section class="info-panel">
+        <h2>How to Play</h2>
+        <ol>
+          <li>Move left and right along the wall as the monkey.</li>
+          <li>Press <strong>Space</strong> to throw bananas.</li>
+          <li>Hit the <span class="visitor-label">visitors</span> to gain points.</li>
+          <li>Avoid hitting <span class="guard-label">guards</span>, or throwing when they're too close.</li>
+          <li>When your lives reach 0, the game ends.</li>
+        </ol>
+        <p class="note">
+          This game was built for <strong>ProgChamp</strong> – a silly, light-hearted
+          stealth-thrower in the spirit of <em>neal.fun</em> style mini-games.
+        </p>
+      </section>
+    </main>
+
+    <footer>
+      <p>Made with 💛 by Team [Your Team Name] for ProgChamp.</p>
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
