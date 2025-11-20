@@ -1,21 +1,21 @@
-// Monkey Mayhem – Simple version: 3 lives, 2-minute timer, High Score
+
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
-// ------------ GAME STATE ------------
+
 let gameRunning = false;
 let gameStarted = false;
 
 let score = 0;
 let lives = 3;
 
-// 2-minute timer (120 seconds)
+
 const TOTAL_TIME = 120;
 let remainingTime = TOTAL_TIME;
 let lastTimestamp = null;
 
-// High score (saved in localStorage)
+
 let highScore = 0;
 const HIGH_SCORE_KEY = "monkeyMayhemHighScore";
 
@@ -24,7 +24,7 @@ if (storedHighScore !== null && !isNaN(parseInt(storedHighScore))) {
   highScore = parseInt(storedHighScore, 10);
 }
 
-// ------------ ENTITIES ------------
+
 const monkey = {
   x: canvas.width / 2,
   y: 160, // wall height
@@ -40,7 +40,7 @@ let guards = [];
 const groundY = 380;
 const gravity = 0.35;
 
-// Input
+
 const keys = {
   left: false,
   right: false,
@@ -48,19 +48,19 @@ const keys = {
 };
 
 let lastThrowTime = 0;
-const throwCooldown = 400; // ms
+const throwCooldown = 400; 
 
-// ------------ UTIL ------------
+
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// ------------ INIT ------------
+
 function initActors() {
   visitors = [];
   guards = [];
 
-  // visitors
+  
   for (let i = 0; i < 3; i++) {
     visitors.push({
       x: canvas.width + i * 200,
@@ -71,7 +71,7 @@ function initActors() {
     });
   }
 
-  // guards
+  
   for (let i = 0; i < 2; i++) {
     guards.push({
       x: canvas.width + i * 350,
@@ -96,11 +96,11 @@ function resetGame() {
   gameStarted = true;
 }
 
-// Start in "press space to start" mode
+
 resetGame();
 gameRunning = false;
 
-// ------------ INPUT ------------
+
 window.addEventListener("keydown", (e) => {
   if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
     keys.left = true;
@@ -112,13 +112,13 @@ window.addEventListener("keydown", (e) => {
   if (e.code === "Space") {
     e.preventDefault();
 
-    // First time starting
+    
     if (!gameStarted) {
       resetGame();
       return;
     }
 
-    // After game over (by time OR by lives)
+   
     if (!gameRunning && (lives <= 0 || remainingTime <= 0)) {
       resetGame();
       return;
@@ -144,15 +144,14 @@ document.getElementById("restartBtn").addEventListener("click", () => {
   resetGame();
 });
 
-// ------------ CORE GAMEPLAY ------------
+
 function throwBanana() {
   const now = Date.now();
   if (!gameRunning) return;
   if (now - lastThrowTime < throwCooldown) return;
   lastThrowTime = now;
 
-  // 🔁 FIX: no more losing life just for throwing near a guard.
-  // Now we ONLY lose life if the banana actually hits a guard.
+  
 
   bananas.push({
     x: monkey.x + monkey.width / 2,
@@ -175,12 +174,12 @@ function updateGameLogic() {
   }
   monkey.x = Math.max(40, Math.min(canvas.width - 40, monkey.x));
 
-  // Throw
+ 
   if (keys.space) {
     throwBanana();
   }
 
-  // Bananas
+  
   bananas.forEach((b) => {
     b.x += b.vx;
     b.y += b.vy;
@@ -191,7 +190,7 @@ function updateGameLogic() {
     (b) => b.x > 0 && b.x < canvas.width && b.y < canvas.height
   );
 
-  // Visitors
+  
   visitors.forEach((v) => {
     v.x -= v.speed;
     if (v.x + v.width < -20) {
@@ -200,7 +199,7 @@ function updateGameLogic() {
     }
   });
 
-  // Guards
+  
   guards.forEach((g) => {
     g.x -= g.speed;
     if (g.x + g.width < -20) {
@@ -230,7 +229,7 @@ function rectCircleColliding(circle, rect) {
 function handleCollisions() {
   if (!gameRunning) return;
 
-  // Bananas vs visitors
+ 
   bananas.forEach((b) => {
     visitors.forEach((v) => {
       if (rectCircleColliding(b, v)) {
@@ -242,9 +241,9 @@ function handleCollisions() {
     });
   });
 
-  // Bananas vs guards
+  
   bananas.forEach((b) => {
-    if (b.toRemove) return; // don't process already-hit bananas again
+    if (b.toRemove) return;
     guards.forEach((g) => {
       if (rectCircleColliding(b, g)) {
         loseLife();
@@ -277,7 +276,7 @@ function loseLife() {
   }
 }
 
-// ------------ TIMER ------------
+
 function updateTimer(dt) {
   if (!gameRunning) return;
 
@@ -289,17 +288,17 @@ function updateTimer(dt) {
   }
 }
 
-// ------------ DRAWING ------------
+
 function drawBackground() {
-  // Wall
+ 
   ctx.fillStyle = "#c97b4a";
   ctx.fillRect(0, monkey.y + monkey.height, canvas.width, 40);
 
-  // Path
+  
   ctx.fillStyle = "#e0e0e0";
   ctx.fillRect(0, groundY + 30, canvas.width, 80);
 
-  // Tree
+  
   ctx.fillStyle = "#4caf50";
   ctx.beginPath();
   ctx.arc(80, 120, 50, 0, Math.PI * 2);
@@ -348,65 +347,83 @@ function drawGuards() {
 }
 
 function drawHUD() {
-  ctx.fillStyle = "#000";
-  ctx.font = "18px system-ui";
+  
+  ctx.save();
 
-  // Left side
+  
+  ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+  ctx.fillRect(0, 0, canvas.width, 40);
+
+  ctx.font = "16px system-ui";
+  ctx.textBaseline = "top";
+
+  
   ctx.textAlign = "left";
-  ctx.fillText(`Score: ${score}`, 20, 30);
-  ctx.fillText(`Lives: ${lives}`, 20, 55);
 
-  // Right side (high score)
-  ctx.textAlign = "right";
-  ctx.fillText(`High Score: ${highScore}`, canvas.width - 20, 30);
+  ctx.fillStyle = "#00eaff";
+  ctx.fillText(`Score: ${score}`, 10, 6);
 
-  // Center top: timer
+  ctx.fillStyle = "#ffea00"; 
+  ctx.fillText(`Lives: ${lives}`, 10, 22);
+
+ 
   const timeDisplay = Math.max(0, Math.ceil(remainingTime));
   ctx.textAlign = "center";
-  ctx.fillText(`Time: ${timeDisplay}s`, canvas.width / 2, 30);
+  ctx.fillStyle = timeDisplay <= 10 ? "#ff5252" : "#00eaff";
+  ctx.fillText(`Time: ${timeDisplay}s`, canvas.width / 2, 14);
 
-  // Overlays
+  
+  ctx.textAlign = "right";
+  ctx.fillStyle = "#76ff03"; 
+  ctx.fillText(`High Score: ${highScore}`, canvas.width - 10, 14);
+
+  ctx.restore();
+
+  
   if (!gameStarted) {
-    ctx.fillStyle = "rgba(0,0,0,0.6)";
+    ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = "#00eaff";
     ctx.font = "32px system-ui";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
     ctx.fillText("Monkey Mayhem 🐒", canvas.width / 2, canvas.height / 2 - 20);
 
     ctx.font = "18px system-ui";
-    ctx.fillText("Press Space to start", canvas.width / 2, canvas.height / 2 + 15);
+    ctx.fillStyle = "#ffea00";
+    ctx.fillText("Press Space to start", canvas.width / 2, canvas.height / 2 + 20);
+
     ctx.textAlign = "left";
+    ctx.textBaseline = "top";
     return;
   }
 
+ 
   if (!gameRunning && (lives <= 0 || remainingTime <= 0)) {
-    ctx.fillStyle = "rgba(0,0,0,0.6)";
+    ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    ctx.fillStyle = "#fff";
+    ctx.fillStyle = "#ffea00";
     ctx.font = "32px system-ui";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
     ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2 - 20);
 
     ctx.font = "20px system-ui";
-    ctx.fillText(
-      `Your score: ${score}`,
-      canvas.width / 2,
-      canvas.height / 2 + 15
-    );
+    ctx.fillText(`Your score: ${score}`, canvas.width / 2, canvas.height / 2 + 10);
     ctx.fillText(
       "Press Space or click Restart",
       canvas.width / 2,
-      canvas.height / 2 + 45
+      canvas.height / 2 + 40
     );
 
     ctx.textAlign = "left";
-  } else {
-    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
   }
 }
 
-// ------------ MAIN LOOP ------------
+
 function gameLoop(timestamp) {
   if (!lastTimestamp) lastTimestamp = timestamp;
   const dt = (timestamp - lastTimestamp) / 1000;
